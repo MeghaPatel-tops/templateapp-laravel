@@ -1,0 +1,15 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
+
+Route::get('/', function () {
+    return view('home');
+});
+
+Route::resource('/product', ProductController::class)->names('product');
+Route::get('/category', function () {
+    return view('category');
+});
+
+
