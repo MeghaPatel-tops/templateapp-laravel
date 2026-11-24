@@ -13,7 +13,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-       return view('product');
+        $productArray = DB::table('product')->get();
+        return view('product',['products'=>$productArray]);
     }
 
     /**
@@ -43,6 +44,7 @@ class ProductController extends Controller
             'image'=>$imagepath,
 
         ]);
+        return redirect('/product');
     }
 
     /**
@@ -58,7 +60,8 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $result = DB::table('product')->where('id',"=",$id)->first();
+        return view('ProductEdit',['singleProduct'=>$result]);
     }
 
     /**
@@ -66,7 +69,28 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validation = $request->validate([
+            'productname'=>'required',
+            'price'=>'required',
+            'description'=>'required',
+            // 'image'=>'required|image|mimes:jpg,jpeg,png|max:2048'
+        ]);
+        if($request->file('image')){
+            $imagepath = $request->file('image')->store('products','public');
+        }
+        else{
+            $imagepath=$request['img1'];
+        }
+       
+       
+        DB::table('product')->where('id',$id)->update([
+            'pname'=>$request['productname'],
+            'price'=>$request['price'],
+            'description'=>$request['description'],
+            'image'=>$imagepath,
+
+        ]);
+        return redirect('/product');
     }
 
     /**
@@ -74,6 +98,7 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $result = DB::table('product')->where('id',"=",$id)->delete();
+        return redirect('/product');
     }
 }
